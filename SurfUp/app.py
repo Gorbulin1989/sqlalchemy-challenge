@@ -16,16 +16,16 @@ from flask import Flask, jsonify
 
 engine = create_engine("sqlite:///resources/hawaii.sqlite")
 
-# Reflect the database into our classes
+# Reflect the database into  classes
 Base = automap_base()
 Base.prepare(autoload_with=engine)
 
 
-# Save our references to each table
+# Save  references to each table
 Measurement = Base.classes.measurement
 Station = Base.classes.station
 
-# Create our session (link) from Python to the DB
+# Create  session (link) from Python to the DB
 session = Session(engine)
 
 # Set up Flask
@@ -46,7 +46,7 @@ def home():
         f"/api/v1.0/start_date/end_date (enter dates as YYYY-MM-DD/YYYY-MM-DD)"
     )
 
-
+# Return a JSON list of stations from the dataset.
 @app.route("/api/v1.0/stations")
 def stations():
     session = Session(engine)
@@ -59,11 +59,13 @@ def stations():
     station_list = list(np.ravel(stations))
     return jsonify(station_list)
 
+# Convert the query results from your precipitation analysis
+#  (i.e. retrieve only the last 12 months of data) to a dictionary
+#  using date as the key and prcp as the value.
 @app.route("/api/v1.0/precipitation")
 def precipitation():
     """Return the JSON representation of your dictionary."""
-   
-    
+       
     # Query the last 12 months of precipitation data
     last_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()[0]
     last_date = dt.datetime.strptime(last_date, "%Y-%m-%d")
@@ -83,11 +85,12 @@ def precipitation():
     return jsonify(prcp_dict)
 
 
+
+
 @app.route("/api/v1.0/tobs")
 def tobs():
     """Return a JSON list of temperature observations for the previous year."""
-    # Create a session with the database
-    #session = Session(engine)
+     
     # Query the dates and temperature observations of the most-active station for the previous year of data
     last_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()[0]
     last_date = dt.datetime.strptime(last_date, "%Y-%m-%d")
